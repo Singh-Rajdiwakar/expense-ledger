@@ -674,7 +674,7 @@ function LandingFooter() {
         ))}
       </div>
       <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-3 border-t border-[#E8EDF3] px-4 pt-6 text-sm font-medium text-[#64748B] sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-        <p>© 2025 Expense Ledger. All rights reserved.</p>
+        <p>© 2026 Expense Ledger. All rights reserved.</p>
         <p className="flex items-center gap-1.5">
           Made with <Heart className="size-4 fill-[#13B8B5] text-[#13B8B5]" /> by Singh Rajdiwakar
         </p>

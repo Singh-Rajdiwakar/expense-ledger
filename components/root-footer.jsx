@@ -24,7 +24,7 @@ export function RootFooter() {
             Protected account access
           </span>
         </div>
-        <p>© 2025 Expense Ledger. All rights reserved.</p>
+        <p>© 2026 Expense Ledger. All rights reserved.</p>
         <p className="flex items-center gap-1.5">
           Made with{" "}
           <Heart className="size-3 fill-[#13B8B5] text-[#13B8B5]" /> by
