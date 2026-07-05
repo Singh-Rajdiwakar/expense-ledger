@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String             @id @default(uuid())
+  clerkUserId   String             @unique
+  email         String             @unique
+  name          String?
+  imageUrl      String?
+  transactions  Transaction[]
+  accounts      Account[]
+  budgets       Budget[]
+  insights      FinancialInsight[]
+  notifications Notification[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@map("users")
+}
+
+model Account {
+  id           String             @id @default(uuid())
+  name         String
+  type         AccountType
+  balance      Decimal            @default(0)
+  isDefault    Boolean            @default(false)
+  userId       String
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  insights     FinancialInsight[]
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Transaction {
+  id                String             @id @default(uuid())
+  type              TransactionType
+  amount            Decimal
+  description       String?
+  date              DateTime
+  category          String
+  receiptUrl        String?
+  isRecurring       Boolean            @default(false)
+  recurringInterval RecurringInterval?
+  nextRecurringDate DateTime?
+  lastProcessed     DateTime?
+  status            TransactionStatus  @default(COMPLETED)
+  userId            String
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId         String
+  account           Account            @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([userId, date])
+  @@index([accountId, date])
+  @@index([userId, accountId, date])
+  @@map("transactions")
+}
+
+model Budget {
+  id            String    @id @default(uuid())
+  amount        Decimal
+  lastAlertSent DateTime?
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("budgets")
+}
+
+model FinancialInsight {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId       String?
+  account         Account? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  scopeKey        String
+  month           Int
+  year            Int
+  totalIncome     Decimal?
+  totalExpenses   Decimal?
+  netBalance      Decimal?
+  topCategory     String?
+  topCategoryPct  Float?
+  summary         String
+  highlights      Json?
+  recommendations Json?
+  metrics         Json?
+  riskLevel       String   @default("low")
+  source          String   @default("RULE_BASED")
+  generatedAt     DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, scopeKey, month, year])
+  @@index([userId, year, month])
+  @@index([accountId, year, month])
+  @@map("financial_insights")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType @default(GENERAL)
+  title     String
+  message   String
+  actionUrl String?
+  metadata  Json?
+  dedupeKey String?          @unique
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  readAt    DateTime?
+
+  @@index([userId, isRead, createdAt])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum AccountType {
+  CURRENT
+  SAVINGS
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum RecurringInterval {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum NotificationType {
+  BUDGET_WARNING
+  BUDGET_EXCEEDED
+  RECURRING_PAYMENT_DUE
+  LARGE_EXPENSE
+  NEGATIVE_BALANCE
+  MONTHLY_REPORT_READY
+  INSIGHT_READY
+  GENERAL
+}
