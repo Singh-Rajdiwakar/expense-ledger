@@ -201,8 +201,8 @@ export default async function InsightsPage({ searchParams }) {
         />
         <MetricCard
           label="Net Balance"
-          value={formatCurrency(insight.netBalance)}
-          helper="Income minus expenses"
+          value={formatCurrency(insight.accountBalance || 0)}
+          helper={accountId ? "Current account balance" : "Total account balance"}
           icon={Wallet}
           tone="purple"
         />
@@ -300,7 +300,7 @@ export default async function InsightsPage({ searchParams }) {
               value={formatPercent(comparisons.expenseChangePct)}
             />
             <MetricRow
-              label="Net balance change"
+              label="Period net change"
               value={formatCurrency(comparisons.netBalanceChange || 0)}
             />
             <MetricRow
