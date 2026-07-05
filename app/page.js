@@ -638,7 +638,7 @@ function LandingFooter() {
       ["Dashboard", "/dashboard"],
     ],
     Connect: [
-      ["LinkedIn", "https://www.linkedin.com/in/singh-rajdiwakar"],
+      ["LinkedIn", "https://www.linkedin.com/in/rajdiwakar-singh-b46a762b4/"],
     ],
   };
 
