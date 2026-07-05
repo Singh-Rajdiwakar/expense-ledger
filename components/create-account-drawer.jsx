@@ -129,8 +129,8 @@ export function CreateAccountDrawer({ children }) {
               </label>
               <Input
                 id="balance"
-                type="number"
-                step="0.01"
+                type="text"
+                inputMode="decimal"
                 placeholder="0.00"
                 {...register("balance")}
               />

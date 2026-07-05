@@ -722,7 +722,7 @@ export default async function LandingPage() {
               <div className="landing-fade-up mt-8 flex flex-wrap items-center gap-3">
                 <CtaButtons />
                 <a
-                  href="https://www.rajdiwakar.tech/"
+                  href="https://www.linkedin.com/in/rajdiwakar-singh-b46a762b4/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Connect with me in a new tab"
