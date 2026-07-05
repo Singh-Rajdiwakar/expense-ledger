@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { BarChart3, LayoutDashboard, Plus } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,8 @@ export function AppTopbar({
   description,
   period,
   actionTone = "teal",
+  dashboardHref,
+  overviewHref,
 }) {
   const actionClass =
     actionTone === "purple"
@@ -39,6 +41,32 @@ export function AppTopbar({
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
+        {dashboardHref && (
+          <Button
+            asChild
+            variant="outline"
+            className="h-10 rounded-xl border-[#E5E7EB] bg-white px-4 text-sm font-semibold text-[#334155] shadow-[0_3px_12px_rgba(15,23,42,0.05)] hover:bg-[#F8FAFC]"
+          >
+            <Link href={dashboardHref}>
+              <LayoutDashboard className="size-4" />
+              Dashboard
+            </Link>
+          </Button>
+        )}
+
+        {overviewHref && (
+          <Button
+            asChild
+            variant="outline"
+            className="h-10 rounded-xl border-[#E5E7EB] bg-white px-4 text-sm font-semibold text-[#334155] shadow-[0_3px_12px_rgba(15,23,42,0.05)] hover:bg-[#F8FAFC]"
+          >
+            <Link href={overviewHref}>
+              <BarChart3 className="size-4" />
+              Monthly Overview
+            </Link>
+          </Button>
+        )}
+
         <MonthYearSelector month={period.month} year={period.year} />
 
         <Button

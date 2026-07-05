@@ -13,6 +13,15 @@ import { formatCurrency } from "@/lib/format";
 import { parseChartRange, parseSelectedPeriod } from "@/lib/date-period";
 import { loadFinancialInsights } from "@/lib/insight-loader";
 
+function getDashboardHref(period) {
+  const params = new URLSearchParams({
+    month: String(period.month),
+    year: String(period.year),
+  });
+
+  return `/dashboard?${params.toString()}`;
+}
+
 export default async function AccountPage({ params, searchParams }) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
@@ -55,6 +64,7 @@ export default async function AccountPage({ params, searchParams }) {
         description="Track your income, expenses and manage your finances smartly."
         period={period}
         actionTone="purple"
+        dashboardHref={getDashboardHref(period)}
       />
 
       <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   ArrowDownRight,
-  ArrowLeft,
   ArrowUpRight,
   BarChart3,
   CalendarDays,
@@ -68,36 +67,29 @@ function MetricRow({ label, value, tooltip }) {
   );
 }
 
-function getBackHref(accountId, period) {
+function getPeriodQuery(period) {
   const params = new URLSearchParams({
     month: String(period.month),
     year: String(period.year),
   });
 
-  return accountId
-    ? `/account/${accountId}?${params.toString()}`
-    : `/dashboard?${params.toString()}`;
+  return params.toString();
 }
 
-function BackButton({ accountId, period }) {
-  return (
-    <Button
-      asChild
-      variant="outline"
-      className="h-10 w-fit rounded-xl border-[#E5E7EB] bg-white px-4 text-[#334155] shadow-[0_3px_12px_rgba(15,23,42,0.05)] hover:bg-[#F8FAFC]"
-    >
-      <Link href={getBackHref(accountId, period)}>
-        <ArrowLeft className="size-4" />
-        {accountId ? "Back to account" : "Back to dashboard"}
-      </Link>
-    </Button>
-  );
+function getDashboardHref(period) {
+  return `/dashboard?${getPeriodQuery(period)}`;
+}
+
+function getMonthlyOverviewHref(accountId, period) {
+  return accountId ? `/account/${accountId}?${getPeriodQuery(period)}` : null;
 }
 
 export default async function InsightsPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const period = parseSelectedPeriod(resolvedSearchParams);
   const accountId = resolvedSearchParams?.accountId || null;
+  const dashboardHref = getDashboardHref(period);
+  const monthlyOverviewHref = getMonthlyOverviewHref(accountId, period);
   const result = await loadFinancialInsights({
     month: period.month,
     year: period.year,
@@ -107,13 +99,14 @@ export default async function InsightsPage({ searchParams }) {
   if (!result.success) {
     return (
       <div className="space-y-5">
-        <BackButton accountId={accountId} period={period} />
         <AppTopbar
           eyebrow="Financial report"
           title="Insights"
           description={`Detailed report for ${formatSelectedMonth(period, "long")}.`}
           period={period}
           actionTone="teal"
+          dashboardHref={dashboardHref}
+          overviewHref={monthlyOverviewHref}
         />
 
         <Card className="mx-auto max-w-2xl">
@@ -135,8 +128,13 @@ export default async function InsightsPage({ searchParams }) {
                 accountId={accountId}
               />
               <Button asChild variant="outline" className="h-10 rounded-xl">
-                <Link href="/dashboard">Back to dashboard</Link>
+                <Link href={dashboardHref}>Dashboard</Link>
               </Button>
+              {monthlyOverviewHref && (
+                <Button asChild variant="outline" className="h-10 rounded-xl">
+                  <Link href={monthlyOverviewHref}>Monthly Overview</Link>
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -159,13 +157,14 @@ export default async function InsightsPage({ searchParams }) {
 
   return (
     <div className="space-y-5">
-      <BackButton accountId={accountId} period={period} />
       <AppTopbar
         eyebrow="Financial report"
         title="Insights"
         description={`Detailed report for ${formatSelectedMonth(period, "long")}.`}
         period={period}
         actionTone="teal"
+        dashboardHref={dashboardHref}
+        overviewHref={monthlyOverviewHref}
       />
 
       <div className="flex flex-col gap-3 rounded-2xl border border-[#E8EDF3] bg-white p-5 shadow-[0_8px_32px_rgba(15,23,42,0.05)] sm:flex-row sm:items-center sm:justify-between">
